@@ -1,6 +1,6 @@
 import {createStandardAction} from 'typesafe-actions'
 
-enum ACTION_TYPES {
+export enum ACTION_TYPES {
   PUSH = 'PUSH',
   POP = 'POP',
   UNSHIFT = 'UNSHIFT',

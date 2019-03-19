@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "target": "es2016",
+    "target": "es2018",
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "alwaysStrict": true,
@@ -12,4 +12,3 @@
     "forceConsistentCasingInFileNames": true
   }
 }
-
