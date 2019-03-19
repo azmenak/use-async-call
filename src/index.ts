@@ -3,36 +3,33 @@ import {ActionType, getType} from 'typesafe-actions'
 
 import * as actions from './actions'
 
-interface IUseArrayStateOperations<T extends any> {
+interface UseArrayStateOperations<T extends any> {
   /**
-   * Appends `value` to end and returns new array with added value
+   * Appends `value` to end
    */
   push(value: T): void
   /**
-   * Appends `value` to beginning and returns new array with added value
+   * Appends `value` to beginning
    */
   unshift(value: T): void
   /**
-   * Invokes `Array.prototype.splice` without mutating original value, returns
-   * new array with modifications
+   * Invokes `Array.prototype.splice` without mutating original value
    */
   splice(start: number, deleteCount?: number, ...values: T[]): void
   /**
-   * Invokes `Array.prototype.pop` without mutating original value, returns
-   * value of `.pop()` operation
+   * Invokes `Array.prototype.pop` without mutating original value
    */
   pop(): void
   /**
-   * Invokes `Array.prototype.shift` without mutating original value, returns
-   * value of `.shift()` operation
+   * Invokes `Array.prototype.shift` without mutating original value
    */
   shift(): void
   /**
-   * Updates value at index and returns new array with value added
+   * Updates value at index
    */
   update(index: number, value: T): void
   /**
-   * Replace value of state, passed through second param of `useState`
+   * Replace the entire value of state, passed through second param of `useState`
    */
   set(values: T[]): void
   /**
@@ -134,10 +131,10 @@ export const reducer = (state: any[], action: ActionType<typeof actions>) => {
 
 export default function useArrayState<T extends any>(
   initialState?: T[]
-): [T[], IUseArrayStateOperations<T>] {
+): [T[], UseArrayStateOperations<T>] {
   const [state, dispatch] = useReducer(reducer, initialState || [])
 
-  const boundActions: IUseArrayStateOperations<T> = {
+  const boundActions: UseArrayStateOperations<T> = {
     push: useCallback((value) => dispatch(actions.push(value)), []),
     pop: useCallback(() => dispatch(actions.pop()), []),
     unshift: useCallback((value) => dispatch(actions.unshift(value)), []),

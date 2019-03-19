@@ -1,39 +1,32 @@
-# use-async-reducer
+# use-array-state
 
-An unoppininated hook to help manage async actions in React
+A simple helper to makes changes to an array without needing to worry about mutating the value
 
 ## Install
 
 ```
-npm install use-async-reducer
+npm install use-array-state
 ```
 
 ## Useage
 
 ```ts
-import {useEffect} from 'react'
-import useAsyncReducer from 'use-async-reducer'
+import useArrayState from 'use-array-state'
 
-function DataLoadingComponent({id}) {
-  const [response, actions] = useAsyncReducer()
-
-  useEffect(() => {
-    const fetchData = async () => {
-      actions.request()
-      try {
-        actions.success(await Api.fetchUser(id))
-      } catch (error) {
-        action.failure(error)
-      }
-    }
-  }, [id])
+function ArrayComponent () {
+  const [value, valueActions] = useArrayState()
 
   return (
-    <>
-      {response.loading && <div>Loading...</div>}
-      {response.data && <div>{response.data.user.name}</div>}
-      {response.error && <div>{response.error.message}</div>}
-    </>
+    <div>
+      <button onClick={() => {valueActions.push('new-value')}}
+      <pre>
+        {JSON.stringify(value, null, 2)}
+      </pre>
+    </div>
   )
 }
 ```
+
+## Available actions
+
+See `src/index.ts` for the the interface, all methods contain docs in types
