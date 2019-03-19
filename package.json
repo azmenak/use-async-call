@@ -1,6 +1,6 @@
 {
   "name": "use-array-state",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Provides a reducer to simplify handling of mutations to array state",
   "scripts": {},
   "keywords": [
