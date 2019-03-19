@@ -2,6 +2,10 @@
   "name": "use-array-state",
   "version": "1.0.1",
   "description": "Provides a reducer to simplify handling of mutations to array state",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azmenak/use-array-state"
+  },
   "scripts": {},
   "keywords": [
     "react",
