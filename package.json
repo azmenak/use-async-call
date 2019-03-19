@@ -1,0 +1,52 @@
+{
+  "name": "use-array-state",
+  "version": "1.0.0",
+  "description": "Provides a reducer to simplify handling of mutations to array state",
+  "scripts": {},
+  "keywords": [
+    "react",
+    "hook",
+    "hooks",
+    "async",
+    "reducer",
+    "typescript",
+    "esm",
+    "pika",
+    "useArrayState",
+    "useReducer"
+  ],
+  "author": "Adam Zmenak <adam.zmenak@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "typesafe-actions": "^3.2.1"
+  },
+  "devDependencies": {
+    "@pika/plugin-build-node": "^0.3.14",
+    "@pika/plugin-build-web": "^0.3.14",
+    "@pika/plugin-ts-standard-pkg": "^0.3.14",
+    "@types/jest": "^24.0.11",
+    "@types/react": "^16.8.8",
+    "jest": "^24.5.0",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.4",
+    "react-hooks-testing-library": "^0.3.7",
+    "ts-jest": "^24.0.0",
+    "typescript": "^3.3.3333"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg"
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ]
+    ]
+  }
+}
