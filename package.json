@@ -6,7 +6,9 @@
     "type": "git",
     "url": "https://github.com/azmenak/use-array-state"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "jest"
+  },
   "keywords": [
     "react",
     "hook",
@@ -22,7 +24,7 @@
   "author": "Adam Zmenak <adam.zmenak@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "typesafe-actions": "^3.2.1"
+    "use-async-reducer": "^1.0.4"
   },
   "devDependencies": {
     "@pika/plugin-build-node": "^0.3.14",
