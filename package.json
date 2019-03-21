@@ -1,10 +1,10 @@
 {
-  "name": "use-array-state",
+  "name": "use-async-call",
   "version": "1.0.2",
-  "description": "Provides a reducer to simplify handling of mutations to array state",
+  "description": "Provides a hook to provide state around an async function call",
   "repository": {
     "type": "git",
-    "url": "https://github.com/azmenak/use-array-state"
+    "url": "https://github.com/azmenak/use-async-call"
   },
   "scripts": {
     "test": "jest"
@@ -45,7 +45,12 @@
   "@pika/pack": {
     "pipeline": [
       [
-        "@pika/plugin-ts-standard-pkg"
+        "@pika/plugin-ts-standard-pkg",
+        {
+          "exclude": [
+            "*.spec.*"
+          ]
+        }
       ],
       [
         "@pika/plugin-build-node"
