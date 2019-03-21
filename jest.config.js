@@ -4,5 +4,6 @@ module.exports = {
     'ts-jest': {
       isolatedModules: true
     }
-  }
+  },
+  roots: ['src']
 }
