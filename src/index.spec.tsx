@@ -71,4 +71,25 @@ describe('use-async-call', () => {
     expect(onSuccess).not.toHaveBeenCalled()
     expect(onFailure).toHaveBeenCalledWith(err)
   })
+
+  it('does not call handlers when the input method changes', async () => {
+    const call = jest.fn(() => Promise.resolve(true))
+    const onSuccess = jest.fn()
+    const {waitForNextUpdate, rerender} = renderHook(
+      ({caller}) => useAsyncCall(caller, {onSuccess}),
+      {initialProps: {caller: call}}
+    )
+
+    expect(onSuccess).not.toHaveBeenCalled()
+
+    const nextCall = jest.fn(() => Promise.resolve(false))
+    rerender({caller: nextCall})
+
+    expect(onSuccess).not.toHaveBeenCalled()
+
+    await waitForNextUpdate()
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith(false)
+  })
 })
