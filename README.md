@@ -1,5 +1,10 @@
 # use-async-call
 
+![npm](https://img.shields.io/npm/v/use-async-call.svg)
+[![codecov](https://codecov.io/gh/azmenak/use-async-call/branch/master/graph/badge.svg)](https://codecov.io/gh/azmenak/use-async-call)
+[![Build Status](https://travis-ci.org/azmenak/use-async-call.svg?branch=master)](https://travis-ci.org/azmenak/use-async-call)
+![NPM](https://img.shields.io/npm/l/use-async-reducer.svg)
+
 Provides an abstraction over the lower-level `use-async-reducer`, handles calls to `useEffect` and handles cancelation when the inputs change or components unmounts to avoid modifying stale data
 
 ## Install
