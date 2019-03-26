@@ -24,7 +24,7 @@
   "author": "Adam Zmenak <adam.zmenak@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "use-async-reducer": "^1.0.4"
+    "use-async-reducer": "^1.2.0"
   },
   "devDependencies": {
     "@pika/plugin-build-node": "^0.3.14",
@@ -33,9 +33,9 @@
     "@types/jest": "^24.0.11",
     "@types/react": "^16.8.8",
     "jest": "^24.5.0",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.4",
-    "react-hooks-testing-library": "^0.3.7",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "react-hooks-testing-library": "^0.3.8",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.3333"
   },

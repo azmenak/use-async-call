@@ -5,5 +5,7 @@ module.exports = {
       isolatedModules: true
     }
   },
+  collectCoverage: true,
+  coverageDirectory: './coverage',
   roots: ['src']
 }
