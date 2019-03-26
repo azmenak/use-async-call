@@ -1,6 +1,6 @@
 {
   "name": "use-async-call",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Provides a hook to provide state around an async function call",
   "repository": {
     "type": "git",
