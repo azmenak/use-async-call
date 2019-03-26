@@ -1,6 +1,8 @@
 import {useEffect, useCallback} from 'react'
 import useAsyncReducer, {Loadable} from 'use-async-reducer'
 
+export {Loadable} from 'use-async-reducer'
+
 export interface UseAsyncCallOptions<T> {
   initialValue?: T
   onSuccess?(data?: T): void
