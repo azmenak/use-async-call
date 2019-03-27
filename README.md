@@ -3,7 +3,7 @@
 ![npm](https://img.shields.io/npm/v/use-async-call.svg)
 [![codecov](https://codecov.io/gh/azmenak/use-async-call/branch/master/graph/badge.svg)](https://codecov.io/gh/azmenak/use-async-call)
 [![Build Status](https://travis-ci.org/azmenak/use-async-call.svg?branch=master)](https://travis-ci.org/azmenak/use-async-call)
-![NPM](https://img.shields.io/npm/l/use-async-reducer.svg)
+![NPM](https://img.shields.io/npm/l/use-async-call.svg)
 
 Provides an abstraction over the lower-level `use-async-reducer`, handles calls to `useEffect` and handles cancelation when the inputs change or components unmounts to avoid modifying stale data
 
@@ -13,11 +13,109 @@ Provides an abstraction over the lower-level `use-async-reducer`, handles calls 
 npm install use-async-call
 ```
 
+## Usage
+
+```ts
+import useAsyncCall from 'use-async-call'
+
+const [state, update, refresh] = useAsyncCall(asyncCreator, (options = {}))
+```
+
+### Params
+
+- `asyncCreator` An async method (returns a promise), create this method with `useCallback` if it depends on state from the component
+
+```ts
+const [searchText, setSearchText] = useState('')
+const fetchData = useCallback(() => Api.search(searchText), [searchText])
+```
+
+- `options`
+
+```ts
+interface UseAsyncCallOptions<T> {
+  /**
+   * Initial value used for `data` of state
+   */
+  initialValue?: T
+
+  /**
+   * Callback called after call is successful
+   * @param data Data returned from async caller
+   */
+  onSuccess?(data?: T): void
+
+  /**
+   * Callback called after async call throws
+   * @param error Error thrown by async caller
+   */
+  onFailure?(error?: Error): void
+
+  /**
+   * Callback always called after async call completes
+   */
+  onComplete?(): void
+}
+```
+
+### Return values
+
+- `state` an object containing state of async call
+
+```ts
+const state: Loadable = {
+  data: {}, // any data
+  loading: false, // true when calls in progress
+  error: null // instance of Error if calls throw
+}
+```
+
+- `update(asyncUpdater, updateOptions = {})` method used to update the state
+
+  - `asyncUpdater` either a promise or a method which returns a promise, the result will be set to the `data` value of the state
+  - `updateOptions`
+
+  ```ts
+  interface UseAsyncCallUpdateOptions<T> {
+    /**
+     * Should thrown errors be re-thrown in the resulting promise from `update`;
+     * useful when using in conjuction with form libraries that expect errors
+     * when submitting form values
+     */
+    throwError?: boolean
+
+    /**
+     * If the caller throws, sets `state.error` to the error and `state.data` to
+     * `null`
+     */
+    saveError?: boolean
+
+    /**
+     * Callback called after call is successful
+     * @param data Data returned from async caller
+     */
+    onSuccess?(data?: T): void
+
+    /**
+     * Callback called after async call throws
+     * @param error Error thrown by async caller
+     */
+    onFailure?(error?: Error): void
+
+    /**
+     * Callback always called after async call completes
+     */
+    onComplete?(): void
+  }
+  ```
+
+- `refresh` method used to re-call the method passed to `useAsyncCall`
+
 ## Examples
 
 ### A component which updates a value at an API
 
-```ts
+```tsx
 import React, {useCallback} from 'react'
 import useAsyncCall from 'use-async-call'
 
@@ -100,7 +198,3 @@ export function useUserData(
   return [user, handleUpdateUser]
 }
 ```
-
-## Available actions
-
-See `src/index.ts` for the the interface, all methods contain docs in types
