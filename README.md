@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/azmenak/use-async-call.svg?branch=master)](https://travis-ci.org/azmenak/use-async-call)
 ![NPM](https://img.shields.io/npm/l/use-async-call.svg)
 
-Provides an abstraction over the lower-level `use-async-reducer`, handles calls to `useEffect` and handles cancelation when the inputs change or components unmounts to avoid modifying stale data
+Provides an abstraction over the lower-level [`use-async-reducer`](https://github.com/azmenak/use-async-reducer), handles calls to `useEffect` and handles cancelation when the inputs change or components unmounts to avoid modifying stale data
 
 ## Install
 
