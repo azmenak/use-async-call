@@ -150,7 +150,7 @@ describe('use-async-call', () => {
     const onSuccess = jest.fn()
 
     act(() => {
-      result.current[1](update, {onSuccess})
+      result.current[1].update(update, {onSuccess})
     })
 
     expect(update).toHaveBeenCalledTimes(1)
@@ -176,7 +176,7 @@ describe('use-async-call', () => {
     const onComplete = jest.fn()
 
     act(() => {
-      result.current[1](updateFail, {onFailure, onComplete})
+      result.current[1].update(updateFail, {onFailure, onComplete})
     })
 
     await waitForNextUpdate()
@@ -196,7 +196,7 @@ describe('use-async-call', () => {
 
     const update = jest.fn(() => Promise.resolve(false))
     act(() => {
-      result.current[1](update)
+      result.current[1].update(update)
     })
 
     await waitForNextUpdate()
@@ -216,7 +216,7 @@ describe('use-async-call', () => {
     const updateFail = jest.fn(() => Promise.reject(error))
 
     act(() => {
-      result.current[1](updateFail, {saveError: true})
+      result.current[1].update(updateFail, {saveError: true})
     })
 
     await waitForNextUpdate()
@@ -238,7 +238,7 @@ describe('use-async-call', () => {
     const updateFail = jest.fn(() => Promise.reject(error))
 
     try {
-      await result.current[1](updateFail, {throwError: true})
+      await result.current[1].update(updateFail, {throwError: true})
     } catch (err) {
       expect(err).toBe(error)
     }
@@ -253,7 +253,7 @@ describe('use-async-call', () => {
     const onSuccess = jest.fn()
 
     act(() => {
-      result.current[1](Promise.resolve(false), {onSuccess})
+      result.current[1].update(Promise.resolve(false), {onSuccess})
     })
 
     expect(onSuccess).not.toBeCalled()
@@ -276,7 +276,7 @@ describe('use-async-call', () => {
     expect(result.current[0].data).toBe(0)
 
     act(() => {
-      result.current[2]()
+      result.current[1].refresh()
     })
 
     expect(call).toHaveBeenCalledTimes(2)

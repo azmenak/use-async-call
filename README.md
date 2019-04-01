@@ -18,7 +18,10 @@ npm install use-async-call
 ```ts
 import useAsyncCall from 'use-async-call'
 
-const [state, update, refresh] = useAsyncCall(asyncCreator, (options = {}))
+const [state, {update, refresh, actions}] = useAsyncCall(
+  asyncCreator,
+  (options = {})
+)
 ```
 
 ### Params
@@ -111,6 +114,31 @@ const state: Loadable = {
 
 - `refresh` method used to re-call the method passed to `useAsyncCall`
 
+- `actions` action methods created by [`use-async-reducer`](https://github.com/azmenak/use-async-reducer)
+
+```ts
+interface AsyncReducerBoundActions<T = any> {
+  /**
+   * To be called at the beginning of a request, sets `loading` to `true`
+   */
+  request(): void
+  /**
+   * To be called with the data to be saved into the state
+   * @param payload Result of the async call
+   */
+  success(payload: T): void
+  /**
+   * To be called when the async call fails
+   * @param error
+   */
+  failure(error: Error): void
+  /**
+   * Can be called when a call fails/complete and the result is being discarded
+   */
+  complete(): void
+}
+```
+
 ## Examples
 
 ### A component which updates a value at an API
@@ -130,7 +158,7 @@ const UserProfile: React.FC<{userId: number}> = ({userId}) => {
   const [name, setName] = useState('')
 
   const fetchUser = useCallback(() => Api.fetchUserById(userId), [userId])
-  const [user, updateUser] = useAsyncCall<User>(fetchUser)
+  const [user, {update: updateUser}] = useAsyncCall<User>(fetchUser)
 
   const handleUpdateUserName = useCallback((): Promise<User> => {
     return Api.updateUser(userId, {name})
@@ -179,15 +207,16 @@ export function useUserData(
   userId: number
 ): [Loadable<User>, (userData: Partial<User>) => Promise<User>] {
   const fetchUser = useCallback(() => Api.fetchUserById(userId), [userId])
-  const [user, updateUser] = useAsyncCall<User>(fetchUser)
+  const [user, {update: updateUser}] = useAsyncCall<User>(fetchUser)
 
+ }, [])
   const handleUpdateUser = useCallback(
     (userData: Partial<User>) => {
       return updateUser(Api.updateUser(userId, userData), {
-        onSuccess: (user) => {
-          alert('Update user!')
+        onSuccess() {
+          alert('Updated user!')
         },
-        onFailure: (error) => {
+        onFailure() {
           alert('Failed to update user')
         }
       })

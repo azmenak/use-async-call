@@ -1,5 +1,8 @@
 import {useEffect, useCallback, useState} from 'react'
-import useAsyncReducer, {Loadable} from 'use-async-reducer'
+import useAsyncReducer, {
+  Loadable,
+  AsyncReducerBoundActions
+} from 'use-async-reducer'
 
 export {Loadable} from 'use-async-reducer'
 
@@ -59,9 +62,25 @@ export type UseAsyncCallUpdater<T> = (
 
 export type UseAsyncCellReturnType<T> = [
   Loadable<T>,
-  UseAsyncCallUpdater<T>,
-  () => void
+  UseAsyncCallReturnTypeOptions<T>
 ]
+
+export interface UseAsyncCallReturnTypeOptions<T> {
+  /**
+   * Method used to update the state though async calls, accepts a promise or
+   * a method which returns a promise, the state data will be updated to the
+   * result of the promise
+   */
+  update: UseAsyncCallUpdater<T>
+  /**
+   * When called, the method passed to `useAsyncCall` will be invoked
+   */
+  refresh(): void
+  /**
+   * Provides access to the reducer actions
+   */
+  actions: AsyncReducerBoundActions<T>
+}
 
 function getUpdaterPromise<T extends any>(
   asyncUpdater: Promise<T> | (() => Promise<T>)
@@ -134,13 +153,7 @@ export default function useAsyncCall<T extends any>(
     return () => {
       didCancel = true
     }
-  }, [
-    asyncCreator,
-    options.onSuccess,
-    options.onFailure,
-    options.onComplete,
-    refreshSymbol
-  ])
+  }, [asyncCreator, refreshSymbol])
 
   const update: UseAsyncCallUpdater<T> = useCallback(
     async (
@@ -180,5 +193,5 @@ export default function useAsyncCall<T extends any>(
     [actions]
   )
 
-  return [response, update, refresh]
+  return [response, {update, refresh, actions}]
 }
