@@ -106,6 +106,11 @@ function useRefreshSymbol(): [Symbol, () => void] {
  * Provides an abstraction to manage async state
  * @param asyncCreator Async method to call, create this method with `useCallback` if it uses state from the component
  * @param options
+ * @returns An array of two values
+ *  0. State of the async operation, an object with keys `data`, `loading`, `error`
+ *  1. An object of dispatch method to update the state
+ *
+ * @see [https://github.com/azmenak/use-async-call/blob/master/README.md](https://github.com/azmenak/use-async-call/blob/master/README.md)
  */
 export default function useAsyncCall<T extends any>(
   asyncCreator: () => Promise<T>,
