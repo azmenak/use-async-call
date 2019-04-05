@@ -24,7 +24,7 @@
   "author": "Adam Zmenak <adam.zmenak@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "use-async-reducer": "^1.2.0"
+    "use-async-reducer": "^1.3.2"
   },
   "devDependencies": {
     "@pika/plugin-build-node": "^0.3.14",
