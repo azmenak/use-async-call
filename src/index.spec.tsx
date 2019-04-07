@@ -17,6 +17,14 @@ afterAll(() => {
 
 afterEach(cleanup)
 
+function flushPromiseQueue() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, 0)
+  })
+}
+
 describe('use-async-call', () => {
   it('sets the response value to the result of the promise', async () => {
     const call = jest.fn(() => Promise.resolve(true))
@@ -287,5 +295,115 @@ describe('use-async-call', () => {
 
     expect(result.current[0].data).toBe(1)
     expect(result.current[0].loading).toBe(false)
+  })
+
+  it('binds the state to the reference of the async caller', async () => {
+    const call1 = jest.fn(() => Promise.resolve(1))
+    const call2 = jest.fn(() => Promise.resolve(2))
+
+    const {waitForNextUpdate, rerender, result} = renderHook(
+      ({caller}) => useAsyncCall(caller),
+      {initialProps: {caller: call1}}
+    )
+
+    expect(result.current[0]).toEqual({
+      data: null,
+      loading: true,
+      error: null
+    })
+
+    await waitForNextUpdate()
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: false,
+      error: null
+    })
+
+    rerender({caller: call2})
+
+    expect(result.current[0]).toEqual({
+      data: null,
+      loading: true,
+      error: null
+    })
+
+    await waitForNextUpdate()
+
+    expect(result.current[0]).toEqual({
+      data: 2,
+      loading: false,
+      error: null
+    })
+  })
+
+  it('discards the local state if the asyncCaller changes durtion update', async () => {
+    const call1 = jest.fn(() => Promise.resolve(1))
+    const call2 = jest.fn(() => Promise.resolve(2))
+
+    const {waitForNextUpdate, rerender, result} = renderHook(
+      ({caller}) => useAsyncCall(caller),
+      {initialProps: {caller: call1}}
+    )
+
+    await waitForNextUpdate()
+
+    act(() => {
+      result.current[1].update(Promise.resolve(3))
+    })
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: true,
+      error: null
+    })
+
+    rerender({caller: call2})
+
+    expect(result.current[0]).toEqual({
+      data: null,
+      loading: true,
+      error: null
+    })
+
+    await waitForNextUpdate()
+
+    expect(result.current[0]).toEqual({
+      data: 2,
+      loading: false,
+      error: null
+    })
+  })
+
+  it('does not update state if component is unmounted during update', async () => {
+    const call = jest.fn(() => Promise.resolve(1))
+    const {result, waitForNextUpdate, unmount} = renderHook(() =>
+      useAsyncCall(call)
+    )
+
+    await waitForNextUpdate()
+
+    const onSuccess = jest.fn()
+    act(() => {
+      result.current[1].update(Promise.resolve(2), {onSuccess})
+    })
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: true,
+      error: null
+    })
+
+    unmount()
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: true,
+      error: null
+    })
+
+    await flushPromiseQueue()
+
+    expect(onSuccess).toHaveBeenCalledWith(2)
   })
 })

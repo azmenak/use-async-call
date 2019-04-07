@@ -1,4 +1,4 @@
-import {useEffect, useCallback, useState} from 'react'
+import {useEffect, useCallback, useState, useRef} from 'react'
 import useAsyncReducer, {
   Loadable,
   AsyncReducerBoundActions
@@ -92,7 +92,10 @@ function getUpdaterPromise<T extends any>(
   return asyncUpdater
 }
 
-function useRefreshSymbol(): [Symbol, () => void] {
+/**
+ * Returns a Symbol which can be used as a dep
+ */
+export function useRefreshSymbol(): [Symbol, () => void] {
   const [refreshSymbol, setRefreshSymbol] = useState(() => Symbol())
 
   const updateSymbol = useCallback(() => {
@@ -100,6 +103,20 @@ function useRefreshSymbol(): [Symbol, () => void] {
   }, [setRefreshSymbol])
 
   return [refreshSymbol, updateSymbol]
+}
+
+/**
+ * Returns previous value, or null if first render pass
+ * @param value updating value
+ */
+export function usePrevious<T extends any>(value: T): T | null {
+  const ref = useRef<T | null>(null)
+
+  useEffect(() => {
+    ref.current = value
+  }, [value])
+
+  return ref.current
 }
 
 /**
@@ -117,12 +134,18 @@ export default function useAsyncCall<T extends any>(
   options: UseAsyncCallOptions<T> = {}
 ): UseAsyncCellReturnType<T> {
   const [refreshSymbol, refresh] = useRefreshSymbol()
+  const previousAsyncCreator = usePrevious(asyncCreator)
+
   const [response, actions] = useAsyncReducer<T>(options.initialValue)
   useEffect(() => {
     let didCancel = false
 
     const callAsync = async () => {
-      actions.request()
+      if (asyncCreator === previousAsyncCreator) {
+        actions.request()
+      } else {
+        actions.initialize()
+      }
       try {
         const data = await asyncCreator()
         if (didCancel) {
@@ -160,26 +183,44 @@ export default function useAsyncCall<T extends any>(
     }
   }, [asyncCreator, refreshSymbol])
 
+  const isUnmounted = useRef(false)
+  useEffect(() => {
+    return () => {
+      isUnmounted.current = true
+    }
+  }, [])
+
   const update: UseAsyncCallUpdater<T> = useCallback(
     async (
       asyncUpdater: Promise<T> | (() => Promise<T>),
       updateOptions: UseAsyncCallUpdateOptions<T> = {}
     ) => {
+      const updateCreatorOwner = asyncCreator
       actions.request()
       try {
         const data = await getUpdaterPromise(asyncUpdater)
 
-        actions.success(data)
+        if (
+          updateCreatorOwner === previousAsyncCreator &&
+          !isUnmounted.current
+        ) {
+          actions.success(data)
+        }
         if (typeof updateOptions.onSuccess === 'function') {
           updateOptions.onSuccess(data)
         }
 
         return data
       } catch (error) {
-        if (updateOptions.saveError) {
-          actions.failure(error)
-        } else {
-          actions.complete()
+        if (
+          updateCreatorOwner === previousAsyncCreator &&
+          !isUnmounted.current
+        ) {
+          if (updateOptions.saveError) {
+            actions.failure(error)
+          } else {
+            actions.complete()
+          }
         }
 
         if (typeof updateOptions.onFailure === 'function') {
@@ -195,7 +236,7 @@ export default function useAsyncCall<T extends any>(
         }
       }
     },
-    [actions]
+    [actions, asyncCreator]
   )
 
   return [response, {update, refresh, actions}]
