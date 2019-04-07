@@ -154,7 +154,7 @@ const DataLoadingComponent: React.FC<{id: number}> = ({id}) => {
 
   const [model] = useAsyncCall(fetchData)
 
-  // model is now managed, its will automatically fetch new data when `id` prop
+  // model is now managed, it will automatically fetch new data when `id` prop
   // changes and update the state to reflect any changes
 }
 ```
