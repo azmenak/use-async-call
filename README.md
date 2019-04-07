@@ -141,6 +141,24 @@ interface AsyncReducerBoundActions<T = any> {
 
 ## Examples
 
+### Basic Example
+
+```tsx
+import React, {useCallback} from 'react'
+import useAsyncCall from 'use-async-call'
+
+import Api from './custom-api'
+
+const DataLoadingComponent: React.FC<{id: number}> = ({id}) => {
+  const fetchData = useCallback(() => Api.fetchModelData(id), [id])
+
+  const [model] = useAsyncCall(fetchData)
+
+  // model is now managed, its will automatically fetch new data when `id` prop
+  // changes and update the state to reflect any changes
+}
+```
+
 ### A component which updates a value at an API
 
 ```tsx
