@@ -406,4 +406,30 @@ describe('use-async-call', () => {
 
     expect(onSuccess).toHaveBeenCalledWith(2)
   })
+
+  it('maintains the data between updates when dontReinitialize is true', async () => {
+    const call1 = jest.fn(() => Promise.resolve(1))
+    const call2 = jest.fn(() => Promise.resolve(2))
+
+    const {waitForNextUpdate, rerender, result} = renderHook(
+      ({caller}) => useAsyncCall(caller, {dontReinitialize: true}),
+      {initialProps: {caller: call1}}
+    )
+
+    await waitForNextUpdate()
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: false,
+      error: null
+    })
+
+    rerender({caller: call2})
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: true,
+      error: null
+    })
+  })
 })

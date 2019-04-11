@@ -43,6 +43,14 @@ interface UseAsyncCallOptions<T> {
   initialValue?: T
 
   /**
+   * When true, will not call `actions.initalize` when `asyncCreator` updates
+   * This keeps the data in the store between updates, useful when the identity
+   * of the data does not belong to the inputs, example would be a search
+   * component that uses "search text" as an input
+   */
+  dontReinitialize?: boolean
+
+  /**
    * Callback called after call is successful
    * @param data Data returned from async caller
    */
@@ -211,7 +219,7 @@ const UserProfile: React.FC<{userId: number}> = ({userId}) => {
 ### Create a custom hook to load and update a model
 
 ```ts
-import React, {useCallback} from 'react'
+import {useCallback} from 'react'
 import useAsyncCall, {Loadable} from 'use-async-call'
 
 import Api from './custom-api'
@@ -243,5 +251,46 @@ export function useUserData(
   )
 
   return [user, handleUpdateUser]
+}
+```
+
+### Get Data from a Search API
+
+```tsx
+import React, {useCallback, useState} from 'react'
+import useAsyncCall from 'use-async-call'
+
+import SearchApi from './search-api'
+
+export function useSearchData(searchText: string) {
+  const fetchData = useCallback(() => SearchApi.find(searchText), [searchText])
+
+  return useAsyncCall(fetchData, {dontReinitialize: true})
+}
+
+const SearchComponent: React.FC = () => {
+  const [searchText, setSearchText] = useState('')
+  const [searchData] = useSearchData(searchText)
+
+  return (
+    <>
+      <input
+        value={searchText}
+        onChange={(event) => {
+          setSearchText(event.target.value)
+        }}
+      />
+      {searchData.data && (
+        <>
+          <h1>Search Results</h1>
+          <ul>
+            {searchData.data.map((searchResult) => (
+              <li key={searchResult.id}>{searchResult.name}</li>
+            ))}
+          </ul>
+        </>
+      )}
+    </>
+  )
 }
 ```

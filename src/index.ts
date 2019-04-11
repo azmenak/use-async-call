@@ -12,6 +12,13 @@ export interface UseAsyncCallOptions<T> {
    */
   initialValue?: T
   /**
+   * When true, will not call `actions.initalize` when `asyncCreator` updates
+   * This keeps the data in the store between updates, useful when the identity
+   * of the data does not belong to the inputs, example would be a search
+   * component that uses "search text" as an input
+   */
+  dontReinitialize?: boolean
+  /**
    * Callback called after call is successful
    * @param data Data returned from async caller
    */
@@ -141,7 +148,7 @@ export default function useAsyncCall<T extends any>(
     let didCancel = false
 
     const callAsync = async () => {
-      if (asyncCreator === previousAsyncCreator) {
+      if (asyncCreator === previousAsyncCreator || options.dontReinitialize) {
         actions.request()
       } else {
         actions.initialize()
@@ -181,7 +188,7 @@ export default function useAsyncCall<T extends any>(
     return () => {
       didCancel = true
     }
-  }, [asyncCreator, refreshSymbol])
+  }, [asyncCreator, refreshSymbol, options.dontReinitialize])
 
   const isUnmounted = useRef(false)
   useEffect(() => {
