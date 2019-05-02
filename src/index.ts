@@ -243,7 +243,7 @@ export default function useAsyncCall<T extends any>(
         }
       }
     },
-    [actions, asyncCreator]
+    [actions, asyncCreator, previousAsyncCreator]
   )
 
   return [response, {update, refresh, actions}]
