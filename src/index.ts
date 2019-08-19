@@ -157,7 +157,7 @@ export default function useAsyncCall<T extends any>(
       return false
     }
 
-    return options.waitFor.some(Boolean)
+    return !options.waitFor.every(Boolean)
   })()
 
   const [response, actions] = useAsyncReducer<T>(options.initialValue)

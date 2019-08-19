@@ -483,4 +483,43 @@ describe('use-async-call', () => {
       error: null
     })
   })
+
+  it('waits for truthy values in "waitFor" array', async () => {
+    const call1 = jest.fn(() => Promise.resolve(1))
+    const waitFor = [false, false]
+
+    const {result, waitForNextUpdate, rerender} = renderHook(() =>
+      useAsyncCall(call1, {waitFor})
+    )
+
+    rerender()
+
+    expect(result.current[0]).toEqual({
+      data: null,
+      loading: true,
+      error: null
+    })
+
+    waitFor[0] = true
+
+    expect(result.current[0]).toEqual({
+      data: null,
+      loading: true,
+      error: null
+    })
+
+    waitFor[1] = true
+
+    rerender()
+
+    await act(async () => {
+      await waitForNextUpdate()
+    })
+
+    expect(result.current[0]).toEqual({
+      data: 1,
+      loading: false,
+      error: null
+    })
+  })
 })
