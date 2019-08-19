@@ -19,6 +19,15 @@ export interface UseAsyncCallOptions<T> {
    */
   dontReinitialize?: boolean
   /**
+   * Useful when you need to register a hook, but are still waiting for other
+   * async data to contrust a request.
+   *
+   * When any values are falsey, `useAsyncCall` will not make any calls to the
+   * async creator and will return a `Loadable` response with
+   * null `data` and `loading=false`
+   */
+  waitFor?: ReadonlyArray<any>
+  /**
    * Callback called after call is successful
    * @param data Data returned from async caller
    */
@@ -143,6 +152,14 @@ export default function useAsyncCall<T extends any>(
   const [refreshSymbol, refresh] = useRefreshSymbol()
   const previousAsyncCreator = usePrevious(asyncCreator)
 
+  const isWaiting = (() => {
+    if (!options.waitFor) {
+      return false
+    }
+
+    return options.waitFor.some(Boolean)
+  })()
+
   const [response, actions] = useAsyncReducer<T>(options.initialValue)
   useEffect(() => {
     let didCancel = false
@@ -153,6 +170,11 @@ export default function useAsyncCall<T extends any>(
       } else {
         actions.initialize()
       }
+
+      if (isWaiting) {
+        return
+      }
+
       try {
         const data = await asyncCreator()
         if (didCancel) {
@@ -188,7 +210,7 @@ export default function useAsyncCall<T extends any>(
     return () => {
       didCancel = true
     }
-  }, [asyncCreator, refreshSymbol, options.dontReinitialize])
+  }, [asyncCreator, refreshSymbol, options.dontReinitialize, isWaiting])
 
   const isUnmounted = useRef(false)
   useEffect(() => {
